@@ -337,6 +337,7 @@ class ElasticsearchRecord extends ActiveRecord
                     'type'     => 'text',
                     'analyzer' => $analyzer,
                     'store'    => true,
+                    ...self::getDefaultTextMappingFields(),
                 ],
                 'postDate'      => [
                     'type'   => 'date',
@@ -359,11 +360,15 @@ class ElasticsearchRecord extends ActiveRecord
                 'url'           => [
                     'type'  => 'text',
                     'store' => true,
+                    'index_options' => 'freqs',
+                    ...self::getDefaultTextMappingFields(),
                 ],
                 'content'       => [
                     'type'     => 'text',
                     'analyzer' => $analyzer,
+                    'index_options' => 'freqs',
                     'store'    => true,
+                    ...self::getDefaultTextMappingFields(),
                 ],
                 'elementHandle' => [
                     'type'  => 'keyword',
@@ -374,7 +379,9 @@ class ElasticsearchRecord extends ActiveRecord
                         'content' => [
                             'type'     => 'text',
                             'analyzer' => $analyzer,
+                            'index_options' => 'freqs',
                             'store'    => true,
+                            ...self::getDefaultTextMappingFields(),
                         ],
                     ],
                 ],
@@ -382,6 +389,53 @@ class ElasticsearchRecord extends ActiveRecord
         ];
 
         return $mapping;
+    }
+
+    private static function getDefaultTextMappingFields()
+    {
+        return [
+            'fields' => [
+                'date' => [
+                    'type' => 'date',
+                    'format' => 'strict_date_time||strict_date',
+                    'ignore_malformed' => true,
+                ],
+                'delimiter' => [
+                    'type' => 'text',
+                    'index_options' => 'freqs',
+                    'analyzer' => 'iq_text_delimiter',
+                ],
+                'enum' => [
+                    'type' => 'keyword',
+                    'ignore_above' => 2048,
+                ],
+                'float' => [
+                    'type' => 'double',
+                    'ignore_malformed' => true,
+                ],
+                'joined' => [
+                    'type' => 'text',
+                    'index_options' => 'freqs',
+                    'analyzer' => 'i_text_bigram',
+                    'search_analyzer' => 'q_text_bigram',
+                ],
+                'location' => [
+                    'type' => 'geo_point',
+                    'ignore_malformed' => true,
+                    'ignore_z_value' => false,
+                ],
+                'prefix' => [
+                    'type' => 'text',
+                    'index_options' => 'docs',
+                    'analyzer' => 'i_prefix',
+                    'search_analyzer' => 'q_prefix',
+                ],
+                'stem' => [
+                    'type' => 'text',
+                    'analyzer' => 'iq_text_stem',
+                ],
+            ],
+        ];
     }
 
     /**
