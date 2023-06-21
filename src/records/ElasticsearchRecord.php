@@ -333,13 +333,15 @@ class ElasticsearchRecord extends ActiveRecord
         $analyzer = self::siteAnalyzer();
         $mapping = [
             'properties' => [
-                'title'         => [
-                    'type'     => 'text',
-                    'analyzer' => $analyzer,
-                    'store'    => true,
-                    ...self::getDefaultTextMappingFields(),
-                ],
-                'postDate'      => [
+                'title'            => array_merge(
+                    [
+                        'type'     => 'text',
+                        'analyzer' => $analyzer,
+                        'store'    => true,
+                    ],
+                    self::getDefaultTextMappingFields()
+                ),
+                'postDate'   => [
                     'type'   => 'date',
                     'format' => 'yyyy-MM-dd HH:mm:ss',
                     'store'  => true,
@@ -357,32 +359,38 @@ class ElasticsearchRecord extends ActiveRecord
                     'type'  => 'boolean',
                     'store' => true,
                 ],
-                'url'           => [
-                    'type'  => 'text',
-                    'store' => true,
-                    'index_options' => 'freqs',
-                    ...self::getDefaultTextMappingFields(),
-                ],
-                'content'       => [
-                    'type'     => 'text',
-                    'analyzer' => $analyzer,
-                    'index_options' => 'freqs',
-                    'store'    => true,
-                    ...self::getDefaultTextMappingFields(),
-                ],
+                'url'           => array_merge(
+                    [
+                        'type'  => 'text',
+                        'store' => true,
+                        'index_options' => 'freqs',
+                    ],
+                    self::getDefaultTextMappingFields()
+                ),
+                'content'          => array_merge(
+                    [
+                        'type'     => 'text',
+                        'analyzer' => $analyzer,
+                        'index_options' => 'freqs',
+                        'store'    => true,
+                    ],
+                    self::getDefaultTextMappingFields()
+                ),
                 'elementHandle' => [
                     'type'  => 'keyword',
                     'store' => true,
                 ],
                 'attachment'    => [
                     'properties' => [
-                        'content' => [
-                            'type'     => 'text',
-                            'analyzer' => $analyzer,
-                            'index_options' => 'freqs',
-                            'store'    => true,
-                            ...self::getDefaultTextMappingFields(),
-                        ],
+                        'content' => array_merge(
+                            [
+                                'type'     => 'text',
+                                'analyzer' => $analyzer,
+                                'index_options' => 'freqs',
+                                'store'    => true,
+                            ],
+                            self::getDefaultTextMappingFields(),
+                        )
                     ],
                 ],
             ],
