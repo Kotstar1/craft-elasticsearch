@@ -332,6 +332,55 @@ class ElasticsearchRecord extends ActiveRecord
     {
         $analyzer = self::siteAnalyzer();
         $mapping = [
+            'data' =>  array(
+                'match_mapping_type' => '*',
+                'mapping' => array(
+                    'analyzer' => 'iq_text_base',
+                    'fields' => array(
+                        'date' => array(
+                            'format' => 'strict_date_time||strict_date',
+                            'ignore_malformed' => true,
+                            'type' => 'date'
+                        ),
+                        'prefix' => array(
+                            'search_analyzer' => 'q_prefix',
+                            'analyzer' => 'i_prefix',
+                            'type' => 'text',
+                            'index_options' => 'docs'
+                        ),
+                        'delimiter' => array(
+                            'analyzer' => 'iq_text_delimiter',
+                            'type' => 'text',
+                            'index_options' => 'freqs'
+                        ),
+                        'joined' => array(
+                            'search_analyzer' => 'q_text_bigram',
+                            'analyzer' => 'i_text_bigram',
+                            'type' => 'text',
+                            'index_options' => 'freqs'
+                        ),
+                        'location' => array(
+                            'ignore_malformed' => true,
+                            'type' => 'geo_point',
+                            'ignore_z_value' => false
+                        ),
+                        'float' => array(
+                            'ignore_malformed' => true,
+                            'type' => 'double'
+                        ),
+                        'enum' => array(
+                            'ignore_above' => 2048,
+                            'type' => 'keyword'
+                        ),
+                        'stem' => array(
+                            'analyzer' => 'iq_text_stem',
+                            'type' => 'text'
+                        )
+                    ),
+                    'index_options' => 'freqs',
+                    'type' => 'text'
+                )
+            ),
             'properties' => [
                 'title'            => array_merge(
                     [
